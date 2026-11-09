@@ -13,18 +13,18 @@
 -- Money is stored in integer centavos. Dates are ISO yyyy-mm-dd.
 
 CREATE TABLE transacoes (
-  seq           INTEGER PRIMARY KEY,                -- 1, 2, 3… (id = 'T-' || printf('%06d', seq))
-  id            TEXT    NOT NULL UNIQUE,            -- T-000001
+  seq           INTEGER PRIMARY KEY,                -- chain order: 1, 2, 3…
+  id            TEXT    NOT NULL UNIQUE,            -- 'T-' + first 16 hex chars of hash_cadeia
   data          TEXT    NOT NULL,
   descricao     TEXT    NOT NULL,
   tipo          TEXT    NOT NULL CHECK (tipo IN ('entrada', 'saida', 'estorno')),
   categoria     TEXT    NOT NULL,
   valor_centavos INTEGER NOT NULL CHECK (valor_centavos > 0),
   estorno_de    TEXT    REFERENCES transacoes (id),
-  impressao     TEXT    NOT NULL,                   -- sha256 of the fields without the id (matches a sheet row before the id is written)
-  hash          TEXT    NOT NULL,                   -- sha256 of id + fields
-  hash_cadeia   TEXT    NOT NULL,                   -- sha256(previous hash_cadeia + hash)
+  hash          TEXT    NOT NULL,                   -- sha256 of the fields
+  hash_cadeia   TEXT    NOT NULL UNIQUE,            -- sha256(previous hash_cadeia + hash)
   lancada_em    TEXT    NOT NULL,                   -- ISO timestamp of ingestion
+  CHECK (id = 'T-' || substr(hash_cadeia, 1, 16)),
   CHECK ((tipo = 'estorno') = (estorno_de IS NOT NULL))
 );
 

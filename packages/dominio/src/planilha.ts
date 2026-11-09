@@ -11,7 +11,10 @@
 
 import type { CamposTransacao, CelulaBruta, Tipo } from './tipos';
 
-/** Column layout of the "Transações" tab (A..H). Change here and only here. */
+/**
+ * Column layout of the consolidated tab (A..G). Change here and only here.
+ * The ETL reads only this tab; raw data lives in other tabs and is organized into it by the board.
+ */
 export const COLUNAS = {
   id: 0,
   data: 1,
@@ -20,18 +23,22 @@ export const COLUNAS = {
   categoria: 4,
   valor: 5,
   estornoDe: 6,
-  lancar: 7,
 } as const;
 
-export const CABECALHO = ['ID', 'Data', 'Descrição', 'Tipo', 'Categoria', 'Valor', 'Estorno de', 'Lançar'] as const;
+export const CABECALHO = ['ID', 'Data', 'Descrição', 'Tipo', 'Categoria', 'Valor', 'Estorno de'] as const;
+
+/** Last column letter, for A1 ranges. */
+export const ULTIMA_COLUNA = 'G';
 
 /** First data row (row 1 is the header). */
 export const PRIMEIRA_LINHA = 2;
 
-export const PADRAO_ID = /^T-\d{6}$/;
+export const PADRAO_ID = /^T-[0-9a-f]{16}$/;
 
-export function formatarId(seq: number): string {
-  return `T-${String(seq).padStart(6, '0')}`;
+/** Accepts an ID typed with any case ("t-A3F9…") and returns the canonical form, or the trimmed text if it is not an ID. */
+export function normalizarId(c: CelulaBruta): string {
+  const t = texto(c);
+  return /^t-[0-9a-f]{16}$/i.test(t) ? `T-${t.slice(2).toLowerCase()}` : t;
 }
 
 const LIMITE_DESCRICAO = 500;
@@ -45,13 +52,7 @@ export function texto(c: CelulaBruta): string {
 }
 
 export function linhaVazia(celulas: CelulaBruta[]): boolean {
-  return celulas.every((c) => texto(c) === '' || c === false);
-}
-
-export function marcadaParaLancar(c: CelulaBruta): boolean {
-  if (c === true) return true;
-  const t = texto(c).toUpperCase();
-  return t === 'TRUE' || t === 'VERDADEIRO';
+  return celulas.slice(0, CABECALHO.length).every((c) => texto(c) === '');
 }
 
 function semAcento(s: string): string {
@@ -109,7 +110,7 @@ export function lerTipo(c: CelulaBruta): Tipo | null {
 
 export type ResultadoLeitura = { ok: true; campos: CamposTransacao } | { ok: false; erros: string[] };
 
-/** Parses and validates the fields of a row (everything except the ID and the Lançar checkbox). */
+/** Parses and validates the fields of a row (everything except the ID). */
 export function lerCampos(celulas: CelulaBruta[]): ResultadoLeitura {
   const erros: string[] = [];
 
@@ -132,10 +133,10 @@ export function lerCampos(celulas: CelulaBruta[]): ResultadoLeitura {
   else if (valorCentavos <= 0) erros.push('Valor deve ser positivo (o Tipo define se entra ou sai)');
   else if (valorCentavos > LIMITE_CENTAVOS) erros.push('Valor acima do limite aceito');
 
-  const estornoTexto = texto(celulas[COLUNAS.estornoDe]).toUpperCase();
+  const estornoTexto = normalizarId(celulas[COLUNAS.estornoDe]);
   let estornoDe: string | null = null;
   if (tipo === 'estorno') {
-    if (!PADRAO_ID.test(estornoTexto)) erros.push('Estorno precisa do ID da transação estornada em "Estorno de" (ex.: T-000012)');
+    if (!PADRAO_ID.test(estornoTexto)) erros.push('Estorno precisa do ID da transação estornada em "Estorno de" (ex.: T-a3f9c21b7e04d5f6)');
     else estornoDe = estornoTexto;
   } else if (estornoTexto) {
     erros.push('"Estorno de" só pode ser preenchido quando o Tipo é Estorno');

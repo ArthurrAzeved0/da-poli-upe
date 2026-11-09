@@ -10,7 +10,7 @@
    ***************************************************************************** */
 
 import { describe, expect, it } from 'vitest';
-import { dataDeSerial, formatarId, lerCampos, lerData, lerTipo, lerValor } from '../src/planilha';
+import { dataDeSerial, lerCampos, lerData, lerTipo, lerValor, normalizarId } from '../src/planilha';
 
 describe('lerData', () => {
   it('converte número de série do Google Sheets', () => {
@@ -52,20 +52,22 @@ describe('lerTipo', () => {
 
 describe('lerCampos', () => {
   it('normaliza espaços na descrição', () => {
-    const r = lerCampos(['', '01/02/2026', '  Compra   de  material ', 'Saída', 'Materiais', 30, '', true]);
+    const r = lerCampos(['', '01/02/2026', '  Compra   de  material ', 'Saída', 'Materiais', 30, '']);
     expect(r.ok && r.campos.descricao).toBe('Compra de material');
   });
   it('exige "Estorno de" no estorno e proíbe nos outros tipos', () => {
-    expect(lerCampos(['', '01/02/2026', 'x', 'Estorno', 'c', 30, '', true]).ok).toBe(false);
-    expect(lerCampos(['', '01/02/2026', 'x', 'Entrada', 'c', 30, 'T-000001', true]).ok).toBe(false);
-    const ok = lerCampos(['', '01/02/2026', 'x', 'Estorno', 'c', 30, 't-000001', true]);
-    expect(ok.ok && ok.campos.estornoDe).toBe('T-000001');
+    expect(lerCampos(['', '01/02/2026', 'x', 'Estorno', 'c', 30, '']).ok).toBe(false);
+    expect(lerCampos(['', '01/02/2026', 'x', 'Entrada', 'c', 30, 'T-a3f9c21b7e04d5f6']).ok).toBe(false);
+    const ok = lerCampos(['', '01/02/2026', 'x', 'Estorno', 'c', 30, ' t-A3F9C21B7E04D5F6 ']);
+    expect(ok.ok && ok.campos.estornoDe).toBe('T-a3f9c21b7e04d5f6');
   });
   it('rejeita valor negativo', () => {
-    expect(lerCampos(['', '01/02/2026', 'x', 'Saída', 'c', -30, '', true]).ok).toBe(false);
+    expect(lerCampos(['', '01/02/2026', 'x', 'Saída', 'c', -30, '']).ok).toBe(false);
   });
 });
 
-it('formatarId preenche com zeros', () => {
-  expect(formatarId(12)).toBe('T-000012');
+it('normalizarId aceita maiúsculas e espaços, mas não inventa um ID', () => {
+  expect(normalizarId(' T-A3F9C21B7E04D5F6 ')).toBe('T-a3f9c21b7e04d5f6');
+  expect(normalizarId('T-123')).toBe('T-123');
+  expect(normalizarId(null)).toBe('');
 });

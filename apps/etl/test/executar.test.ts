@@ -36,7 +36,9 @@ describe('primeira carga', () => {
     const { relatorio, notificador } = await rodar(planilha);
 
     expect(relatorio).toMatchObject({ status: 'sucesso', novas: 2, idsGravados: 2, divergencias: 0 });
-    expect([planilha.id(0), planilha.id(1)]).toEqual(['T-000001', 'T-000002']);
+    const estado0 = await carregarEstado(env.DB);
+    expect([planilha.id(0), planilha.id(1)]).toEqual(estado0.transacoes.map((t) => t.id));
+    expect(planilha.id(0)).toMatch(/^T-[0-9a-f]{16}$/);
     expect(notificador.mensagens).toEqual([]);
 
     const estado = await carregarEstado(env.DB);
@@ -49,8 +51,8 @@ describe('primeira carga', () => {
     const planilha = new PlanilhaFalsa(...linhas);
     const { relatorio } = await rodar(planilha);
     expect(relatorio.novas).toBe(400);
-    expect(planilha.id(399)).toBe('T-000400');
     const estado = await carregarEstado(env.DB);
+    expect(planilha.id(399)).toBe(estado.transacoes[399]!.id);
     expect(await verificarCadeia(estado.transacoes)).toEqual({ ok: true });
   });
 });
@@ -63,7 +65,7 @@ describe('adulteração', () => {
     planilha.linhas[1]![5] = 12; // someone lowers an expense
     const primeira = await rodar(planilha);
     expect(primeira.notificador.mensagens).toHaveLength(1);
-    expect(primeira.notificador.mensagens[0]).toContain('T-000002');
+    expect(primeira.notificador.mensagens[0]).toContain(planilha.id(1));
     expect(primeira.notificador.mensagens[0]).toContain('Valor');
 
     const segunda = await rodar(planilha);
@@ -82,20 +84,21 @@ describe('adulteração', () => {
     const planilha = new PlanilhaFalsa(linha('Mensalidades', 'Entrada', 500), linha('Lanche', 'Saída', 120.5));
     await rodar(planilha);
 
+    const apagado = planilha.id(1);
     planilha.linhas.splice(1, 1);
-    planilha.linhas.push(['T-000777', ...linha('Inventada', 'Saída', 10).slice(1)]);
+    planilha.linhas.push(['T-0123456789abcdef', ...linha('Inventada', 'Saída', 10).slice(1)]);
     const { relatorio, notificador } = await rodar(planilha);
 
     expect(relatorio).toMatchObject({ novas: 0, divergencias: 2 });
-    expect(notificador.mensagens[0]).toContain('T-000002');
-    expect(notificador.mensagens[0]).toContain('T-000777');
+    expect(notificador.mensagens[0]).toContain(apagado);
+    expect(notificador.mensagens[0]).toContain('T-0123456789abcdef');
     expect((await carregarEstado(env.DB)).transacoes).toHaveLength(2);
   });
 
   it('o banco recusa UPDATE e DELETE em transações', async () => {
     await rodar(new PlanilhaFalsa(linha('Mensalidades', 'Entrada', 500)));
-    await expect(env.DB.prepare("UPDATE transacoes SET valor_centavos = 1 WHERE id = 'T-000001'").run()).rejects.toThrow(/somente inserção/);
-    await expect(env.DB.prepare("DELETE FROM transacoes WHERE id = 'T-000001'").run()).rejects.toThrow(/somente inserção/);
+    await expect(env.DB.prepare('UPDATE transacoes SET valor_centavos = 1').run()).rejects.toThrow(/somente inserção/);
+    await expect(env.DB.prepare('DELETE FROM transacoes').run()).rejects.toThrow(/somente inserção/);
   });
 });
 
@@ -105,12 +108,13 @@ describe('falhas', () => {
     planilha.falharEscrita = true;
     const falha = await rodar(planilha);
     expect(falha.relatorio.status).toBe('erro');
-    expect((await carregarEstado(env.DB)).pendentes).toEqual(new Set(['T-000001']));
+    const registrado = (await carregarEstado(env.DB)).transacoes[0]!.id;
+    expect((await carregarEstado(env.DB)).pendentes).toEqual(new Set([registrado]));
 
     planilha.falharEscrita = false;
     const { relatorio } = await rodar(planilha);
     expect(relatorio).toMatchObject({ status: 'sucesso', novas: 0, idsGravados: 1 });
-    expect(planilha.id(0)).toBe('T-000001');
+    expect(planilha.id(0)).toBe(registrado);
     const estado = await carregarEstado(env.DB);
     expect(estado.transacoes).toHaveLength(1);
     expect(estado.pendentes.size).toBe(0);
@@ -118,10 +122,10 @@ describe('falhas', () => {
 
   it('segue a linha quando alguém insere outra acima durante a execução', async () => {
     const planilha = new PlanilhaFalsa(linha('Mensalidades', 'Entrada', 500));
-    planilha.entreLeituras = () => planilha.linhas.unshift(['', '', 'rascunho', '', '', '', '', false]);
+    planilha.entreLeituras = () => planilha.linhas.unshift(['', '', 'anotação solta', '', '', '', '']);
     await rodar(planilha);
     expect(planilha.id(0)).toBe('');
-    expect(planilha.id(1)).toBe('T-000001');
+    expect(planilha.id(1)).toBe((await carregarEstado(env.DB)).transacoes[0]!.id);
   });
 
   it('avisa só na primeira falha seguida de leitura da planilha', async () => {

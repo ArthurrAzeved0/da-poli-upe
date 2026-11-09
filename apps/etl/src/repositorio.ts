@@ -26,7 +26,6 @@ interface LinhaTransacao {
   categoria: string;
   valor_centavos: number;
   estorno_de: string | null;
-  impressao: string;
   hash: string;
   hash_cadeia: string;
   lancada_em: string;
@@ -47,7 +46,6 @@ export async function carregarEstado(db: D1Database): Promise<EstadoLedger> {
       categoria: t.categoria,
       valorCentavos: t.valor_centavos,
       estornoDe: t.estorno_de,
-      impressao: t.impressao,
       hash: t.hash,
       hashCadeia: t.hash_cadeia,
       lancadaEm: t.lancada_em,
@@ -63,9 +61,9 @@ export async function registrarNovas(db: D1Database, novas: Transacao[]): Promis
   await db.batch([
     db
       .prepare(
-        `INSERT INTO transacoes (seq, id, data, descricao, tipo, categoria, valor_centavos, estorno_de, impressao, hash, hash_cadeia, lancada_em)
+        `INSERT INTO transacoes (seq, id, data, descricao, tipo, categoria, valor_centavos, estorno_de, hash, hash_cadeia, lancada_em)
          SELECT value ->> '$.seq', value ->> '$.id', value ->> '$.data', value ->> '$.descricao', value ->> '$.tipo',
-                value ->> '$.categoria', value ->> '$.valorCentavos', value ->> '$.estornoDe', value ->> '$.impressao',
+                value ->> '$.categoria', value ->> '$.valorCentavos', value ->> '$.estornoDe',
                 value ->> '$.hash', value ->> '$.hashCadeia', value ->> '$.lancadaEm'
          FROM json_each(?1) ORDER BY value ->> '$.seq'`,
       )

@@ -9,7 +9,7 @@
    * Contato: arthur_azevedo05@hotmail.com                                     *
    ***************************************************************************** */
 
-import { PRIMEIRA_LINHA, type CelulaBruta, type EscritaId, type LinhaLida } from '@da-poli/dominio';
+import { PRIMEIRA_LINHA, ULTIMA_COLUNA, type CelulaBruta, type EscritaId, type LinhaLida } from '@da-poli/dominio';
 import type { FontePlanilha } from './portas';
 
 interface ContaDeServico {
@@ -57,7 +57,7 @@ async function obterToken(conta: ContaDeServico): Promise<string> {
   return access_token;
 }
 
-/** Quotes a tab name for A1 notation: 'Transações'!A2:H */
+/** Quotes a tab name for A1 notation: 'Transações'!A2:G */
 function intervalo(aba: string, a1: string): string {
   return `'${aba.replace(/'/g, "''")}'!${a1}`;
 }
@@ -88,7 +88,7 @@ export class PlanilhaGoogle implements FontePlanilha {
 
   async ler(): Promise<LinhaLida[]> {
     const params = new URLSearchParams({ valueRenderOption: 'UNFORMATTED_VALUE', dateTimeRenderOption: 'SERIAL_NUMBER', majorDimension: 'ROWS' });
-    const url = `${API}/${this.planilhaId}/values/${encodeURIComponent(intervalo(this.aba, `A${PRIMEIRA_LINHA}:H`))}?${params}`;
+    const url = `${API}/${this.planilhaId}/values/${encodeURIComponent(intervalo(this.aba, `A${PRIMEIRA_LINHA}:${ULTIMA_COLUNA}`))}?${params}`;
     const resposta = await fetch(url, { headers: { authorization: `Bearer ${await this.#autorizacao()}` } });
     if (!resposta.ok) throw new Error(`Sheets API (leitura) respondeu ${resposta.status}: ${await resposta.text()}`);
     const { values = [] } = (await resposta.json()) as { values?: CelulaBruta[][] };

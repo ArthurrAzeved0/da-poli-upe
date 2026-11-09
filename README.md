@@ -6,11 +6,13 @@ Site do **Diretório Acadêmico da Escola Politécnica de Pernambuco (UPE)**. O 
 
 ## Como funciona
 
-A diretoria lança as movimentações numa planilha do Google Sheets, a ferramenta que ela já usa. A cada hora, um Worker da Cloudflare:
+A diretoria organiza os dados brutos (loja, camisas, eventos, extratos) em abas do Google Sheets e leva as movimentações conferidas para uma **aba consolidada**. A cada hora, um Worker da Cloudflare:
 
-1. lê a planilha;
+1. lê a aba consolidada;
 2. registra as linhas novas num banco **somente inserção**;
-3. devolve para a planilha o **ID** gerado (`T-000001`, `T-000002`, …).
+3. devolve para a planilha o **ID** de cada uma.
+
+O ID é um **elo de uma cadeia de hashes**, como numa blockchain: `hash(conteúdo da linha + ID anterior)`, por exemplo `T-a3f9c21b7e04d5f6`.
 
 A partir daí, o registro no banco vale como fonte da verdade:
 - Se alguém **alterar um valor**, **apagar uma linha** ou **inventar um ID** na planilha, a próxima execução detecta a diferença e avisa a diretoria no Telegram.

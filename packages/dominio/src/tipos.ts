@@ -25,15 +25,18 @@ export interface CamposTransacao {
   estornoDe: string | null;
 }
 
-/** A transaction recorded in the ledger. */
+/**
+ * A transaction recorded in the ledger. Its ID is a link of a hash chain:
+ *   hash       = sha256(fields)
+ *   hashCadeia = sha256(previous hashCadeia + hash)
+ *   id         = 'T-' + first 16 hex chars of hashCadeia
+ * Changing any recorded transaction changes its hash and breaks every link after it.
+ */
 export interface Transacao extends CamposTransacao {
+  /** Ingestion order (the order of the chain). Internal; not shown in the sheet. */
   seq: number;
   id: string;
-  /** sha256 of the fields without the id: recognizes a row whose id was not written back yet. */
-  impressao: string;
-  /** sha256 of id + fields. */
   hash: string;
-  /** sha256(previous hashCadeia + hash). */
   hashCadeia: string;
   lancadaEm: string;
 }
@@ -59,10 +62,10 @@ export interface Divergencia {
   snapshot: string | null;
 }
 
-/** An ID to be written into column A of a sheet row. */
+/** An ID to be written into the ID column of a sheet row. */
 export interface EscritaId {
   linha: number;
   id: string;
-  /** Fingerprint the row must still have when the ID is written (protects against rows shifting). */
-  impressao: string;
+  /** Content hash the row must still have when the ID is written (protects against rows shifting). */
+  hash: string;
 }

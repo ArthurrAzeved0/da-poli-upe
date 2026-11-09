@@ -9,13 +9,13 @@
    * Contato: arthur_azevedo05@hotmail.com                                     *
    ***************************************************************************** */
 
-import { hashCadeiaDe, hashDe, HASH_GENESE, impressaoDe, sha256Hex } from './hash';
-import { COLUNAS, formatarId, lerCampos, linhaVazia, marcadaParaLancar, PADRAO_ID, snapshotLinha, texto } from './planilha';
+import { hashCadeiaDe, hashDe, HASH_GENESE, idDe, sha256Hex } from './hash';
+import { COLUNAS, lerCampos, linhaVazia, normalizarId, PADRAO_ID, snapshotLinha } from './planilha';
 import type { CamposTransacao, Divergencia, EscritaId, LinhaLida, Transacao } from './tipos';
 
 /** What the ledger knows before this run. */
 export interface EstadoLedger {
-  /** All recorded transactions, ordered by seq. */
+  /** All recorded transactions, in chain order (seq). */
   transacoes: Transacao[];
   /** IDs inserted in a previous run whose write-back to the sheet was not confirmed. */
   pendentes: ReadonlySet<string>;
@@ -46,18 +46,18 @@ function camposDiferentes(registrado: CamposTransacao, atual: CamposTransacao): 
 }
 
 /**
- * Compares the sheet with the ledger. Pure: no I/O, no clock except `agora`.
- * Never trusts the sheet over the ledger — the sheet can only add new rows.
+ * Compares the consolidated tab with the ledger. Pure: no I/O, no clock except `agora`.
+ * Never trusts the sheet over the ledger: the sheet can only add new rows.
  */
 export async function conciliar(linhas: LinhaLida[], estado: EstadoLedger, agora: string): Promise<ResultadoConciliacao> {
   const porId = new Map(estado.transacoes.map((t) => [t.id, t]));
-  const pendentesPorImpressao = new Map<string, Transacao[]>();
+  const pendentesPorHash = new Map<string, Transacao[]>();
   for (const id of estado.pendentes) {
     const t = porId.get(id);
     if (!t) continue;
-    const lista = pendentesPorImpressao.get(t.impressao) ?? [];
+    const lista = pendentesPorHash.get(t.hash) ?? [];
     lista.push(t);
-    pendentesPorImpressao.set(t.impressao, lista);
+    pendentesPorHash.set(t.hash, lista);
   }
 
   // Reversals already used, so the same transaction cannot be reversed twice.
@@ -73,18 +73,17 @@ export async function conciliar(linhas: LinhaLida[], estado: EstadoLedger, agora
   const divergencias: Divergencia[] = [];
   let linhasLidas = 0;
 
-  for (const linha of linhas) {
-    const { celulas, numero } = linha;
+  for (const { celulas, numero } of linhas) {
     if (linhaVazia(celulas)) continue;
     linhasLidas++;
 
-    const idCelula = texto(celulas[COLUNAS.id]).toUpperCase();
+    const idCelula = normalizarId(celulas[COLUNAS.id]);
     const snapshot = snapshotLinha(celulas);
     const marca = (await sha256Hex(snapshot)).slice(0, 16);
 
     if (idCelula) {
-      const registrada = porId.get(idCelula);
-      if (!registrada || !PADRAO_ID.test(idCelula)) {
+      const registrada = PADRAO_ID.test(idCelula) ? porId.get(idCelula) : undefined;
+      if (!registrada) {
         divergencias.push({
           chave: `id_desconhecido:${idCelula}:${marca}`,
           tipo: 'id_desconhecido',
@@ -120,7 +119,7 @@ export async function conciliar(linhas: LinhaLida[], estado: EstadoLedger, agora
         });
         continue;
       }
-      if ((await hashDe(idCelula, lido.campos)) !== registrada.hash) {
+      if ((await hashDe(lido.campos)) !== registrada.hash) {
         const campos = camposDiferentes(registrada, lido.campos);
         divergencias.push({
           chave: `alterada:${idCelula}:${marca}`,
@@ -134,9 +133,7 @@ export async function conciliar(linhas: LinhaLida[], estado: EstadoLedger, agora
       continue;
     }
 
-    // Row without an ID: a draft until "Lançar" is checked.
-    if (!marcadaParaLancar(celulas[COLUNAS.lancar])) continue;
-
+    // Row without an ID: a new transaction.
     const lido = lerCampos(celulas);
     if (!lido.ok) {
       divergencias.push({
@@ -144,19 +141,19 @@ export async function conciliar(linhas: LinhaLida[], estado: EstadoLedger, agora
         tipo: 'invalida',
         idTransacao: null,
         linhaPlanilha: numero,
-        detalhe: `A linha ${numero} está marcada para lançar mas tem erros: ${lido.erros.join('; ')}.`,
+        detalhe: `A linha ${numero} não pôde ser lançada: ${lido.erros.join('; ')}.`,
         snapshot,
       });
       continue;
     }
     const campos = lido.campos;
-    const impressao = await impressaoDe(campos);
+    const hash = await hashDe(campos);
 
     // Recorded in a previous run, but the ID never reached the sheet: write it again instead of duplicating.
-    const pendente = pendentesPorImpressao.get(impressao)?.find((t) => !vistos.has(t.id));
+    const pendente = pendentesPorHash.get(hash)?.find((t) => !vistos.has(t.id));
     if (pendente) {
       vistos.add(pendente.id);
-      escritas.push({ linha: numero, id: pendente.id, impressao });
+      escritas.push({ linha: numero, id: pendente.id, hash });
       continue;
     }
 
@@ -167,7 +164,7 @@ export async function conciliar(linhas: LinhaLida[], estado: EstadoLedger, agora
       else if (alvo.tipo === 'estorno') erro = 'não é possível estornar um estorno';
       else if (estornadas.has(alvo.id)) erro = `${alvo.id} já foi estornada`;
       else if (alvo.valorCentavos !== campos.valorCentavos) erro = `o valor do estorno deve ser igual ao de ${alvo.id}`;
-      if (erro) {
+      if (erro || !alvo) {
         divergencias.push({
           chave: `invalida:${marca}`,
           tipo: 'invalida',
@@ -178,18 +175,16 @@ export async function conciliar(linhas: LinhaLida[], estado: EstadoLedger, agora
         });
         continue;
       }
-      estornadas.add(alvo!.id);
+      estornadas.add(alvo.id);
     }
 
     seq++;
-    const id = formatarId(seq);
-    const hash = await hashDe(id, campos);
     cadeia = await hashCadeiaDe(cadeia, hash);
-    const nova: Transacao = { ...campos, seq, id, impressao, hash, hashCadeia: cadeia, lancadaEm: agora };
+    const nova: Transacao = { ...campos, seq, id: idDe(cadeia), hash, hashCadeia: cadeia, lancadaEm: agora };
     novas.push(nova);
-    porId.set(id, nova);
-    vistos.add(id);
-    escritas.push({ linha: numero, id, impressao });
+    porId.set(nova.id, nova);
+    vistos.add(nova.id);
+    escritas.push({ linha: numero, id: nova.id, hash });
   }
 
   for (const t of estado.transacoes) {
@@ -217,21 +212,20 @@ export async function conciliar(linhas: LinhaLida[], estado: EstadoLedger, agora
 export async function posicionarEscritas(linhasAtuais: LinhaLida[], escritas: EscritaId[]): Promise<EscritaId[]> {
   const candidatas = new Map<number, string>();
   for (const l of linhasAtuais) {
-    if (texto(l.celulas[COLUNAS.id])) continue;
-    if (!marcadaParaLancar(l.celulas[COLUNAS.lancar])) continue;
+    if (normalizarId(l.celulas[COLUNAS.id])) continue;
     const lido = lerCampos(l.celulas);
-    if (lido.ok) candidatas.set(l.numero, await impressaoDe(lido.campos));
+    if (lido.ok) candidatas.set(l.numero, await hashDe(lido.campos));
   }
 
   const usadas = new Set<number>();
   const resultado: EscritaId[] = [];
   for (const e of escritas) {
     let alvo: number | undefined;
-    if (candidatas.get(e.linha) === e.impressao && !usadas.has(e.linha)) {
+    if (candidatas.get(e.linha) === e.hash && !usadas.has(e.linha)) {
       alvo = e.linha;
     } else {
-      for (const [numero, impressao] of candidatas) {
-        if (impressao === e.impressao && !usadas.has(numero)) {
+      for (const [numero, hash] of candidatas) {
+        if (hash === e.hash && !usadas.has(numero)) {
           alvo = numero;
           break;
         }

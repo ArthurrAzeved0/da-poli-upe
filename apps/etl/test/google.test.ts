@@ -38,15 +38,15 @@ describe('PlanilhaGoogle', () => {
       const url = String(entrada);
       chamadas.push({ url, init });
       if (url.startsWith('https://oauth2.googleapis.com/token')) return Response.json({ access_token: 'tok' });
-      if (url.includes('/values/')) return Response.json({ values: [['', 46091, 'Lanche', 'Saída', 'Eventos', 12.5, '', true]] });
+      if (url.includes('/values/')) return Response.json({ values: [['', 46091, 'Lanche', 'Saída', 'Eventos', 12.5, '']] });
       return Response.json({});
     });
 
     const planilha = new PlanilhaGoogle(json, 'abc123', 'Transações');
     const linhas = await planilha.ler();
-    await planilha.gravarIds([{ linha: 2, id: 'T-000001', impressao: 'x' }]);
+    await planilha.gravarIds([{ linha: 2, id: 'T-a3f9c21b7e04d5f6', hash: 'x' }]);
 
-    expect(linhas).toEqual([{ numero: 2, celulas: ['', 46091, 'Lanche', 'Saída', 'Eventos', 12.5, '', true] }]);
+    expect(linhas).toEqual([{ numero: 2, celulas: ['', 46091, 'Lanche', 'Saída', 'Eventos', 12.5, ''] }]);
 
     // One token for both calls.
     expect(chamadas.filter((c) => c.url.includes('oauth2')).length).toBe(1);
@@ -62,13 +62,13 @@ describe('PlanilhaGoogle', () => {
     });
 
     const leitura = chamadas[1]!.url;
-    expect(decodeURIComponent(leitura)).toContain("'Transações'!A2:H");
+    expect(decodeURIComponent(leitura)).toContain("'Transações'!A2:G");
     expect(leitura).toContain('valueRenderOption=UNFORMATTED_VALUE');
     expect(chamadas[1]!.init!.headers).toMatchObject({ authorization: 'Bearer tok' });
 
     expect(JSON.parse(String(chamadas[2]!.init!.body))).toEqual({
       valueInputOption: 'RAW',
-      data: [{ range: "'Transações'!A2", values: [['T-000001']] }],
+      data: [{ range: "'Transações'!A2", values: [['T-a3f9c21b7e04d5f6']] }],
     });
   });
 

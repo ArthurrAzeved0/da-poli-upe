@@ -71,5 +71,4 @@ export const linha = (descricao: string, tipo: string, valor: number, extra: { d
   extra.categoria ?? 'Eventos',
   valor,
   extra.estornoDe ?? '',
-  true,
 ];
