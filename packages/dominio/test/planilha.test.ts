@@ -1,0 +1,60 @@
+import { describe, expect, it } from 'vitest';
+import { dataDeSerial, formatarId, lerCampos, lerData, lerTipo, lerValor } from '../src/planilha';
+
+describe('lerData', () => {
+  it('converte número de série do Google Sheets', () => {
+    expect(dataDeSerial(45658)).toBe('2025-01-01');
+  });
+  it('aceita dd/mm/aaaa e aaaa-mm-dd', () => {
+    expect(lerData('05/03/2026')).toBe('2026-03-05');
+    expect(lerData('2026-03-05')).toBe('2026-03-05');
+  });
+  it('rejeita datas impossíveis', () => {
+    expect(lerData('31/02/2026')).toBeNull();
+    expect(lerData('ontem')).toBeNull();
+  });
+});
+
+describe('lerValor', () => {
+  it('converte números para centavos sem erro de ponto flutuante', () => {
+    expect(lerValor(10.1)).toBe(1010);
+    expect(lerValor(0.29)).toBe(29);
+  });
+  it('aceita texto em formato brasileiro', () => {
+    expect(lerValor('R$ 1.234,56')).toBe(123456);
+    expect(lerValor('50')).toBe(5000);
+  });
+  it('rejeita frações de centavo e texto inválido', () => {
+    expect(lerValor(1.005)).toBeNull();
+    expect(lerValor('1,2,3')).toBeNull();
+  });
+});
+
+describe('lerTipo', () => {
+  it('ignora acento e caixa', () => {
+    expect(lerTipo('Saída')).toBe('saida');
+    expect(lerTipo('SAIDA')).toBe('saida');
+    expect(lerTipo('Entrada')).toBe('entrada');
+    expect(lerTipo('outro')).toBeNull();
+  });
+});
+
+describe('lerCampos', () => {
+  it('normaliza espaços na descrição', () => {
+    const r = lerCampos(['', '01/02/2026', '  Compra   de  material ', 'Saída', 'Materiais', 30, '', true]);
+    expect(r.ok && r.campos.descricao).toBe('Compra de material');
+  });
+  it('exige "Estorno de" no estorno e proíbe nos outros tipos', () => {
+    expect(lerCampos(['', '01/02/2026', 'x', 'Estorno', 'c', 30, '', true]).ok).toBe(false);
+    expect(lerCampos(['', '01/02/2026', 'x', 'Entrada', 'c', 30, 'T-000001', true]).ok).toBe(false);
+    const ok = lerCampos(['', '01/02/2026', 'x', 'Estorno', 'c', 30, 't-000001', true]);
+    expect(ok.ok && ok.campos.estornoDe).toBe('T-000001');
+  });
+  it('rejeita valor negativo', () => {
+    expect(lerCampos(['', '01/02/2026', 'x', 'Saída', 'c', -30, '', true]).ok).toBe(false);
+  });
+});
+
+it('formatarId preenche com zeros', () => {
+  expect(formatarId(12)).toBe('T-000012');
+});
