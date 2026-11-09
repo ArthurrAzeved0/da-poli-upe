@@ -1,3 +1,14 @@
+/* *****************************************************************************
+   * DA Poli-UPE · Domínio                                       planilha.ts   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
 import type { CamposTransacao, CelulaBruta, Tipo } from './tipos';
 
 /** Column layout of the "Transações" tab (A..H). Change here and only here. */

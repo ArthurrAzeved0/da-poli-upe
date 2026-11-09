@@ -1,3 +1,14 @@
+/* *****************************************************************************
+   * DA Poli-UPE · Domínio                                 conciliar.test.ts   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
 import { describe, expect, it } from 'vitest';
 import { conciliar, posicionarEscritas, type EstadoLedger } from '../src/conciliar';
 import { verificarCadeia } from '../src/hash';

@@ -8,6 +8,8 @@
   "scripts": {
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
+    "cabecalho": "node scripts/cabecalho.mjs",
+    "cabecalho:check": "node scripts/cabecalho.mjs --check",
     "db:migrate:local": "wrangler d1 migrations apply da-poli --local --config apps/etl/wrangler.jsonc",
     "db:migrate:remote": "wrangler d1 migrations apply da-poli --remote --config apps/etl/wrangler.jsonc"
   },

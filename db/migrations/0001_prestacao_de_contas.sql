@@ -1,3 +1,14 @@
+/* *****************************************************************************
+   * DA Poli-UPE · Banco de dados               0001_prestacao_de_contas.sql   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
 -- Prestação de contas: append-only ledger, divergences and ETL run log.
 -- Money is stored in integer centavos. Dates are ISO yyyy-mm-dd.
 

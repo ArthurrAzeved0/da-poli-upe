@@ -1,3 +1,14 @@
+/* *****************************************************************************
+   * DA Poli-UPE · Domínio                                      conciliar.ts   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
 import { hashCadeiaDe, hashDe, HASH_GENESE, impressaoDe, sha256Hex } from './hash';
 import { COLUNAS, formatarId, lerCampos, linhaVazia, marcadaParaLancar, PADRAO_ID, snapshotLinha, texto } from './planilha';
 import type { CamposTransacao, Divergencia, EscritaId, LinhaLida, Transacao } from './tipos';

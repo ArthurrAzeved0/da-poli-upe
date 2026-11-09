@@ -1,3 +1,14 @@
+/* *****************************************************************************
+   * DA Poli-UPE · Domínio                                          saldo.ts   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
 import type { CamposTransacao, Tipo } from './tipos';
 
 type ParaSaldo = Pick<CamposTransacao, 'data' | 'tipo' | 'categoria' | 'valorCentavos' | 'estornoDe'> & { id: string };
