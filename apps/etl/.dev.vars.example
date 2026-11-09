@@ -1,0 +1,5 @@
+# Copy to .dev.vars (git-ignored) for local development.
+# The service account JSON must be on one line (as downloaded, with \n inside private_key).
+GOOGLE_SERVICE_ACCOUNT={"type":"service_account","client_email":"...@....iam.gserviceaccount.com","private_key":"-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"}
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
