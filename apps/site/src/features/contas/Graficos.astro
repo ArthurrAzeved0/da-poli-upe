@@ -86,7 +86,10 @@
   .grafico-mes :global(svg) { display: block; width: 100%; height: auto; overflow: visible; }
   .grafico-mes :global(.grade) { stroke: var(--chao-forte); stroke-width: 1; }
   .grafico-mes :global(.base) { stroke: var(--tinta-2); stroke-width: 1.5; }
-  .grafico-mes :global(.eixo) { fill: var(--tinta-2); font: 500 13px var(--fonte-texto); }
+  .grafico-mes :global(.rolagem) { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; padding-bottom: var(--e-2); }
+  .grafico-mes :global(.rolagem svg) { width: auto; max-width: none; }
+  .grafico-mes :global(.eixo) { fill: var(--tinta-2); font: 500 14px var(--fonte-texto); }
+  .grafico-mes :global(.eixo.ano) { font-weight: 600; fill: var(--tinta); }
   .grafico-mes :global(.b-entrada) { fill: var(--serie-entrada); }
   .grafico-mes :global(.b-saida) { fill: var(--serie-saida); }
   .grafico-mes :global(.alvo) { fill: transparent; cursor: default; }
@@ -144,8 +147,9 @@
   }
   .barras :global(.nome) { font-weight: 500; }
   .barras :global(.quanto) { font: 700 1.2rem/1 var(--fonte-placa); }
-  .barras :global(.trilho) { grid-column: 1 / -1; height: 0.75rem; background: var(--chao-forte); }
-  .barras :global(.trilho i) { display: block; height: 100%; }
+  /* Amounts, not progress: a bar on a thin wine baseline, no track. */
+  .barras :global(.trilho) { grid-column: 1 / -1; height: 0.75rem; border-bottom: 2px solid var(--vinho); display: flex; align-items: flex-end; }
+  .barras :global(.trilho i) { display: block; height: 0.625rem; }
   [data-categorias='entrada'] :global(.trilho i) { background: var(--serie-entrada); }
   [data-categorias='saida'] :global(.trilho i) { background: var(--serie-saida); }
   .barras :global(.nada) { color: var(--tinta-2); }

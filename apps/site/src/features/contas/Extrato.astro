@@ -133,7 +133,8 @@
     border-bottom: 2px solid var(--chao-forte);
     vertical-align: baseline;
   }
-  .tabela :is(th, td).num { text-align: right; padding-right: 0; }
+  .tabela th.num,
+  .tabela :global(td.num) { text-align: right; padding-right: 0; }
   .tabela :global(td.data) { white-space: nowrap; color: var(--tinta-2); width: 7.5rem; }
   .tabela :global(td.cat) { color: var(--tinta-2); width: 12rem; }
   .tabela :global(td.num) { font: 700 1.25rem/1 var(--fonte-placa); white-space: nowrap; width: 10rem; }

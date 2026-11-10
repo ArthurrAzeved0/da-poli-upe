@@ -34,6 +34,7 @@ export const SITE = {
 };
 
 export function paginaAtiva(href: string, caminho: string): boolean {
-  const limpo = caminho.replace(/\/$/, '') || '/';
+  // Static builds may report "/contas.html" or "/index.html"; compare the clean route.
+  const limpo = caminho.replace(/(\/index)?\.html$/, '').replace(/\/$/, '') || '/';
   return href === '/' ? limpo === '/' : limpo === href || limpo.startsWith(`${href}/`);
 }

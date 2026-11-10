@@ -64,15 +64,18 @@ function preencherPlaca(d: ContasPublicas) {
 function desenharMeses(d: ContasPublicas) {
   const alvo = document.querySelector<HTMLElement>('[data-grafico-mes]');
   if (!alvo || alvo.hidden) return;
-  alvo.querySelector('svg')?.remove();
+  alvo.querySelector('.rolagem')?.remove();
 
-  const L = Math.max(280, Math.round(alvo.clientWidth));
-  const estreito = L < 640;
-  const meses = d.resumo.porMes.slice(estreito ? -6 : -12);
-  const A = estreito ? 240 : 320;
-  const topo = 12, base = A - 42, esq = estreito ? 44 : 64, dir = 4;
+  // Every month is shown, on every screen: narrow screens scroll sideways and open on the latest month.
+  const visivel = Math.max(280, Math.round(alvo.clientWidth));
+  const estreito = visivel < 640;
+  const meses = d.resumo.porMes;
+  const esq = estreito ? 48 : 64, dir = 4;
+  const L = Math.max(visivel, esq + dir + meses.length * (estreito ? 64 : 72));
+  const A = estreito ? 260 : 320;
+  const topo = 16, base = A - 42;
   const max = Math.max(1, ...meses.flatMap((m) => [m.entradasCentavos, m.saidasCentavos]));
-  const passo = niceStep(max / 4);
+  const passo = niceStep(max / 5);
   const teto = Math.ceil(max / passo) * passo;
   const y = (c: number) => base - (Math.max(0, c) / teto) * (base - topo);
   const largura = (L - esq - dir) / meses.length;
@@ -87,12 +90,14 @@ function desenharMeses(d: ContasPublicas) {
   }
 
   const dica = alvo.querySelector<HTMLElement>('[data-dica]')!;
+  const rolagem = el('div', { class: 'rolagem', tabindex: '-1' });
   meses.forEach((m, i) => {
     const cx = esq + largura * i + largura / 2;
     s.append(barraArredondada(cx - barra - 1, y(m.entradasCentavos), barra, base - y(m.entradasCentavos), 'b-entrada'));
     s.append(barraArredondada(cx + 1, y(m.saidasCentavos), barra, base - y(m.saidasCentavos), 'b-saida'));
     const r = svg('text', { class: 'eixo', x: cx, y: base + 24, 'text-anchor': 'middle' });
     r.textContent = formatarMes(m.mes, i === 0 || m.mes.endsWith('-01'));
+    if (i === 0 || m.mes.endsWith('-01')) r.setAttribute('class', 'eixo ano');
     s.append(r);
 
     const descricao = `${formatarMesLongo(m.mes)}: entradas ${formatarReais(m.entradasCentavos)}, saídas ${formatarReais(m.saidasCentavos)}`;
@@ -104,7 +109,8 @@ function desenharMeses(d: ContasPublicas) {
         el('span', {}, 'Saídas', el('strong', {}, formatarReais(m.saidasCentavos))),
       );
       const min = Math.min(y(m.entradasCentavos), y(m.saidasCentavos));
-      dica.style.left = `${Math.min(Math.max(cx, 100), L - 100)}px`;
+      const naTela = cx - rolagem.scrollLeft;
+      dica.style.left = `${Math.min(Math.max(naTela, 100), visivel - 100)}px`;
       dica.style.top = `${min}px`;
       dica.hidden = false;
     };
@@ -115,7 +121,10 @@ function desenharMeses(d: ContasPublicas) {
     alvoMes.addEventListener('blur', esconder);
     s.append(alvoMes);
   });
-  alvo.prepend(s);
+  rolagem.append(s);
+  alvo.prepend(rolagem);
+  rolagem.scrollLeft = rolagem.scrollWidth;
+  rolagem.addEventListener('scroll', () => (dica.hidden = true), { passive: true });
 
   const corpo = document.querySelector('[data-tabela-mes]');
   corpo?.replaceChildren(
