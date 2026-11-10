@@ -1,0 +1,156 @@
+---
+/* *****************************************************************************
+   * DA Poli-UPE · Site                                       Graficos.astro   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
+/** Month and category charts. Markup is the frame; contas.client.ts draws the data. */
+---
+
+<section class="bloco" aria-labelledby="titulo-mes" data-graficos hidden>
+  <div class="cabeca">
+    <h2 id="titulo-mes">Movimentação por mês</h2>
+    <ul class="legenda" aria-label="Legenda">
+      <li><i class="entrada"></i>Entradas</li>
+      <li><i class="saida"></i>Saídas</li>
+    </ul>
+  </div>
+  <div class="grafico-mes" data-grafico-mes>
+    <div class="dica" data-dica role="status" hidden></div>
+  </div>
+  <button type="button" class="alternar" data-alternar-tabela aria-expanded="false" aria-controls="tabela-mes">
+    Ver em tabela
+  </button>
+  <div id="tabela-mes" class="tabela-mes" hidden>
+    <table>
+      <caption class="so-leitor">Entradas e saídas por mês</caption>
+      <thead><tr><th scope="col">Mês</th><th scope="col">Entradas</th><th scope="col">Saídas</th></tr></thead>
+      <tbody data-tabela-mes></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="bloco categorias" aria-labelledby="titulo-categorias" data-graficos hidden>
+  <h2 id="titulo-categorias">Por categoria</h2>
+  <div class="colunas">
+    <div>
+      <h3>De onde veio</h3>
+      <ol class="barras" data-categorias="entrada"></ol>
+    </div>
+    <div>
+      <h3>Para onde foi</h3>
+      <ol class="barras" data-categorias="saida"></ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bloco {
+    margin-top: var(--e-8);
+    border-top: var(--regra) solid var(--magenta);
+    padding-top: var(--e-5);
+  }
+  h2 { font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem); color: var(--magenta); }
+  h3 {
+    font: 700 1.35rem/1.1 var(--fonte-placa);
+    color: var(--vinho);
+    margin-bottom: var(--e-4);
+  }
+  .cabeca {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--e-3) var(--e-6);
+  }
+  .legenda {
+    display: flex;
+    gap: var(--e-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-weight: 500;
+  }
+  .legenda li { display: flex; align-items: center; gap: var(--e-2); }
+  .legenda i { width: 0.9rem; height: 0.9rem; display: block; }
+  .legenda .entrada { background: var(--serie-entrada); }
+  .legenda .saida { background: var(--serie-saida); }
+
+  .grafico-mes { position: relative; margin-top: var(--e-5); }
+  .grafico-mes :global(svg) { display: block; width: 100%; height: auto; overflow: visible; }
+  .grafico-mes :global(.grade) { stroke: var(--chao-forte); stroke-width: 1; }
+  .grafico-mes :global(.base) { stroke: var(--tinta-2); stroke-width: 1.5; }
+  .grafico-mes :global(.rolagem) { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; padding-bottom: var(--e-2); }
+  .grafico-mes :global(.rolagem svg) { width: auto; max-width: none; }
+  .grafico-mes :global(.eixo) { fill: var(--tinta-2); font: 500 14px var(--fonte-texto); }
+  .grafico-mes :global(.eixo.ano) { font-weight: 600; fill: var(--tinta); }
+  .grafico-mes :global(.b-entrada) { fill: var(--serie-entrada); }
+  .grafico-mes :global(.b-saida) { fill: var(--serie-saida); }
+  .grafico-mes :global(.alvo) { fill: transparent; cursor: default; }
+  .grafico-mes :global(.alvo:hover),
+  .grafico-mes :global(.alvo:focus-visible) { fill: rgb(139 4 69 / 0.07); outline: none; }
+  .grafico-mes :global(.alvo:focus-visible) { stroke: var(--magenta); stroke-width: 2; }
+
+  .dica {
+    position: absolute;
+    pointer-events: none;
+    background: var(--vinho);
+    color: #fff;
+    padding: var(--e-3) var(--e-4);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    min-width: 12rem;
+    transform: translate(-50%, calc(-100% - 10px));
+    box-shadow: 0 6px 18px rgb(42 6 20 / 0.22);
+    z-index: 2;
+  }
+  .dica :global(b) { display: block; font: 700 1.1rem/1.2 var(--fonte-placa); margin-bottom: var(--e-1); }
+  .dica :global(span) { display: flex; justify-content: space-between; gap: var(--e-4); }
+
+  .alternar {
+    margin-top: var(--e-4);
+    background: none;
+    border: 0;
+    padding: var(--e-1) 0;
+    color: var(--framboesa);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+  .alternar:hover { color: var(--magenta); }
+
+  .tabela-mes table { border-collapse: collapse; margin-top: var(--e-3); min-width: min(100%, 28rem); }
+  .tabela-mes :is(th, td) { text-align: right; padding: var(--e-2) var(--e-4); border-bottom: 2px solid var(--chao-forte); }
+  .tabela-mes :is(th, td):first-child { text-align: left; padding-left: 0; }
+  .tabela-mes th { font: 700 0.95rem var(--fonte-placa); letter-spacing: 0.04em; text-transform: uppercase; color: var(--tinta-2); }
+
+  .colunas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    gap: var(--e-6) var(--e-8);
+    margin-top: var(--e-5);
+  }
+  .barras { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-3); }
+  .barras :global(li) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--e-1) var(--e-4);
+    align-items: baseline;
+  }
+  .barras :global(.nome) { font-weight: 500; }
+  .barras :global(.quanto) { font: 700 1.2rem/1 var(--fonte-placa); }
+  /* Amounts, not progress: a bar on a thin wine baseline, no track. */
+  .barras :global(.trilho) { grid-column: 1 / -1; height: 0.75rem; border-bottom: 2px solid var(--vinho); display: flex; align-items: flex-end; }
+  .barras :global(.trilho i) { display: block; height: 0.625rem; }
+  [data-categorias='entrada'] :global(.trilho i) { background: var(--serie-entrada); }
+  [data-categorias='saida'] :global(.trilho i) { background: var(--serie-saida); }
+  .barras :global(.nada) { color: var(--tinta-2); }
+</style>

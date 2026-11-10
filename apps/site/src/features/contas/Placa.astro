@@ -1,0 +1,187 @@
+---
+/* *****************************************************************************
+   * DA Poli-UPE · Site                                          Placa.astro   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
+/**
+ * The plate: the fixed summary region. Rendered with placeholders, filled by contas.client.ts.
+ * Fields are addressed by data-campo; the whole plate reports its state in data-estado.
+ */
+interface Props {
+  titulo: string;
+  nivel?: 'h1' | 'h2';
+  link?: string;
+}
+const { titulo, nivel = 'h1', link } = Astro.props;
+const Titulo = nivel;
+---
+
+<section class="placa" data-placa data-estado="carregando" aria-busy="true" aria-labelledby="placa-titulo">
+  <header class="faixa">
+    <Titulo id="placa-titulo">{titulo}</Titulo>
+    <p class="atualizado" data-campo="atualizado">&nbsp;</p>
+  </header>
+
+  <div class="saldo">
+    <p class="rotulo" id="rotulo-saldo">Valor em caixa</p>
+    <p class="valor-saldo" aria-labelledby="rotulo-saldo" data-campo="saldo">
+      <span class="moeda">R$</span><span class="numero">—</span>
+    </p>
+    {link && <a class="ver" href={link}>Ver a prestação de contas completa</a>}
+  </div>
+
+  <dl class="campos">
+    <div class="campo"><dt class="rotulo">Entradas</dt><dd data-campo="entradas">—</dd></div>
+    <div class="campo"><dt class="rotulo">Saídas</dt><dd data-campo="saidas">—</dd></div>
+    <div class="campo"><dt class="rotulo">Lançamentos</dt><dd data-campo="lancamentos">—</dd></div>
+    <div class="campo"><dt class="rotulo">Período</dt><dd data-campo="periodo">—</dd></div>
+  </dl>
+
+  <div class="falha" data-falha hidden>
+    <p>Não foi possível carregar as contas agora.</p>
+    <button type="button" data-recarregar>Tentar de novo</button>
+  </div>
+</section>
+
+<style>
+  .placa {
+    --cor-campo: var(--magenta);
+    background: var(--cor-campo);
+    color: var(--sobre-placa);
+    border: var(--moldura) solid var(--vinho);
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-areas:
+      'faixa faixa'
+      'saldo campos';
+  }
+  .faixa {
+    grid-area: faixa;
+    background: var(--vinho);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--e-2) var(--e-6);
+    padding: var(--e-5) var(--e-6);
+  }
+  .faixa :is(h1, h2) {
+    font-size: clamp(2rem, 1.2rem + 2.6vw, 3rem);
+    font-weight: 800;
+  }
+  .atualizado { color: var(--sobre-placa-2); font-weight: 500; }
+
+  .rotulo {
+    font: 700 0.95rem/1.2 var(--fonte-placa);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sobre-placa-2);
+    margin: 0;
+  }
+
+  .saldo {
+    grid-area: saldo;
+    container-type: inline-size;
+    padding: var(--e-6);
+    border-right: var(--regra) solid var(--vinho);
+    display: flex;
+    flex-direction: column;
+    gap: var(--e-3);
+  }
+  .valor-saldo {
+    font: 800 clamp(3rem, 19cqi, 8.25rem)/0.92 var(--fonte-placa);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.12em;
+  }
+  .valor-saldo .moeda { font-size: 0.42em; line-height: 1.1; }
+  .ver {
+    margin-top: auto;
+    align-self: flex-start;
+    color: #fff;
+    font-weight: 600;
+    padding-top: var(--e-4);
+  }
+  .ver:hover { color: var(--chao-forte); }
+
+  .campos {
+    grid-area: campos;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .campo {
+    padding: var(--e-5) var(--e-5) var(--e-5) var(--e-6);
+    border-bottom: var(--regra) solid var(--vinho);
+    display: flex;
+    flex-direction: column;
+    gap: var(--e-2);
+    min-width: 0;
+  }
+  .campo:nth-child(even) { border-left: var(--regra) solid var(--vinho); }
+  .campo:nth-last-child(-n + 2) { border-bottom: 0; }
+  dd {
+    margin: 0;
+    font: 700 clamp(1.6rem, 1rem + 1.6vw, 2.75rem)/1.05 var(--fonte-placa);
+    overflow-wrap: anywhere;
+  }
+  [data-campo='periodo'] { font-size: clamp(1.35rem, 0.9rem + 1.2vw, 2.1rem); }
+
+  .placa :focus-visible { outline-color: var(--rosa); }
+
+  /* The figures resolve once when the data lands: the page's one authored moment. */
+  [data-estado='pronto'] :is(.valor-saldo, dd) {
+    animation: resolver 700ms var(--ease-saida) both;
+  }
+  [data-estado='pronto'] dd { animation-delay: 120ms; }
+  @keyframes resolver {
+    from { opacity: 0.15; transform: translateY(0.12em); filter: blur(3px); }
+  }
+  [data-estado='carregando'] :is(.valor-saldo, dd) { opacity: 0.35; }
+
+  .falha {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--e-4);
+    padding: var(--e-4) var(--e-6);
+    background: var(--vinho);
+    border-top: var(--regra) solid var(--vinho);
+    font-weight: 600;
+  }
+  .falha[hidden] { display: none; }
+  .falha button {
+    background: #fff;
+    color: var(--vinho);
+    border: 0;
+    padding: var(--e-2) var(--e-4);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .falha button:hover { background: var(--chao-forte); }
+
+  @media (max-width: 56rem) {
+    .placa {
+      grid-template-columns: 1fr;
+      grid-template-areas: 'faixa' 'saldo' 'campos';
+    }
+    .saldo { border-right: 0; border-bottom: var(--regra) solid var(--vinho); padding: var(--e-5); }
+    .faixa { padding: var(--e-4) var(--e-5); }
+    .campo { padding: var(--e-4) var(--e-5); }
+  }
+  @media (max-width: 24rem) {
+    .campos { grid-template-columns: 1fr; }
+    .campo:nth-child(even) { border-left: 0; }
+    .campo:nth-last-child(2) { border-bottom: var(--regra) solid var(--vinho); }
+  }
+</style>

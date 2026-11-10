@@ -1,0 +1,30 @@
+---
+/* *****************************************************************************
+   * DA Poli-UPE · Site                                            404.astro   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
+import Base from '../layouts/Base.astro';
+---
+
+<Base titulo="Página não encontrada" descricao="Esta página não existe no site do DA Poli-UPE.">
+  <div class="envelope">
+    <section class="nao-achou">
+      <p class="codigo">404</p>
+      <h1>Essa página não existe</h1>
+      <p>Talvez o endereço tenha mudado. <a href="/">Voltar para o início</a> ou <a href="/contas">ver a prestação de contas</a>.</p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .nao-achou { padding-block: var(--e-8); max-width: 40rem; }
+  .codigo { font: 800 clamp(5rem, 3rem + 10vw, 9rem)/0.9 var(--fonte-placa); color: var(--magenta); }
+  h1 { font-size: clamp(2rem, 1.4rem + 2vw, 3rem); margin: var(--e-4) 0 var(--e-4); }
+</style>

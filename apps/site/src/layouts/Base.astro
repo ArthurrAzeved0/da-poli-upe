@@ -1,0 +1,72 @@
+---
+/* *****************************************************************************
+   * DA Poli-UPE · Site                                           Base.astro   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
+import '@fontsource/barlow/400.css';
+import '@fontsource/barlow/500.css';
+import '@fontsource/barlow/600.css';
+import '@fontsource/barlow-condensed/600.css';
+import '@fontsource/barlow-condensed/700.css';
+import '@fontsource/barlow-condensed/800.css';
+import '../styles/base.css';
+import Cabecalho from '../components/Cabecalho.astro';
+import Rodape from '../components/Rodape.astro';
+import { SITE } from '../config/navegacao';
+
+interface Props {
+  titulo?: string;
+  descricao: string;
+}
+
+const { titulo, descricao } = Astro.props;
+const tituloCompleto = titulo ? `${titulo} · ${SITE.nome}` : SITE.nome;
+const canonica = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descricao} />
+    <link rel="canonical" href={canonica} />
+    <meta name="theme-color" content="#8b0445" />
+    <link rel="icon" type="image/png" href="/marca/favicon.png" />
+    <link rel="apple-touch-icon" href="/marca/apple-touch-icon.png" />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:image" content={new URL('/marca/logo-da-poli-upe.webp', Astro.site)} />
+    <meta property="og:locale" content="pt_BR" />
+  </head>
+  <body>
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+    <Cabecalho />
+    <main id="conteudo">
+      <slot />
+    </main>
+    <Rodape />
+  </body>
+</html>
+
+<style>
+  .pular {
+    position: absolute;
+    left: var(--margem);
+    top: -100px;
+    background: var(--magenta);
+    color: #fff;
+    padding: var(--e-2) var(--e-4);
+    font-weight: 600;
+    z-index: 10;
+  }
+  .pular:focus { top: var(--e-2); }
+</style>
