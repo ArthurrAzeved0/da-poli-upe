@@ -8,8 +8,8 @@
     {
       "binding": "DB",
       "database_name": "da-poli",
-      // Same database as apps/etl/wrangler.jsonc. Replace with the id printed by `wrangler d1 create da-poli`.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      // Same database as apps/etl/wrangler.jsonc (D1 "da-poli", region ENAM).
+      "database_id": "71f7c2f0-6826-49e7-9e8b-44a144a8029a",
       "migrations_dir": "../../db/migrations"
     }
   ]
