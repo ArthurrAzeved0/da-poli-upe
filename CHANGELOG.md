@@ -6,6 +6,21 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), e
 
 ## [Não lançado]
 
+## [0.3.0] - 2026-11-09
+
+O site ganhou personalidade: a identidade de prancha técnica do DA.
+
+### Adicionado
+- **Identidade "prancha técnica"**: o site inteiro virou uma folha de desenho de engenharia, com papel milimetrado rosa, moldura da folha e carimbo no rodapé (projeto, gestão, número da folha e autoria).
+- **O logo do DA desenhado como peça** na página inicial: a mancha em camadas com linhas de centro, círculo de construção e cota de raio.
+- **Cota sobre a placa** mostrando o período das contas, como uma medida no desenho.
+- **Banners de prévia de link** (WhatsApp, Instagram etc.): 1200×630 em PNG leve, um para o início e outro para a prestação de contas, com as tags Open Graph completas.
+- Gestão atual (**Gestão 2027**, posse em 11/11/2026) na configuração central do site.
+
+### Alterado
+- "Atualizado em" saiu da faixa da placa e virou um campo dela.
+- Valores da placa nunca quebram linha e se ajustam à largura do campo.
+
 ## [0.2.0] - 2026-11-09
 
 O site no ar em https://da-poli.pages.dev.
@@ -42,6 +57,7 @@ Fundação da prestação de contas: tudo o que acontece entre a planilha e o ba
 - CI no GitHub Actions: cabeçalhos de autoria, checagem de tipos e testes (46).
 - Licença MIT e cabeçalho de autoria em todos os arquivos-fonte.
 
-[Não lançado]: https://github.com/ArthurrAzeved0/da-poli-upe/compare/v0.2.0...HEAD
+[Não lançado]: https://github.com/ArthurrAzeved0/da-poli-upe/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/ArthurrAzeved0/da-poli-upe/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ArthurrAzeved0/da-poli-upe/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ArthurrAzeved0/da-poli-upe/releases/tag/v0.1.0

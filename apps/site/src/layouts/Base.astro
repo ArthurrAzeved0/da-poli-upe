@@ -24,11 +24,14 @@ import { SITE } from '../config/navegacao';
 interface Props {
   titulo?: string;
   descricao: string;
+  /** Link-preview banner (WhatsApp, Instagram, etc.): 1200×630 PNG in public/compartilhar. */
+  banner?: string;
 }
 
-const { titulo, descricao } = Astro.props;
+const { titulo, descricao, banner = '/compartilhar/inicio.png' } = Astro.props;
 const tituloCompleto = titulo ? `${titulo} · ${SITE.nome}` : SITE.nome;
-const canonica = new URL(Astro.url.pathname, Astro.site);
+const canonica = new URL(Astro.url.pathname.replace(/(\/index)?\.html$/, '') || '/', Astro.site);
+const imagem = new URL(banner, Astro.site);
 ---
 
 <!doctype html>
@@ -42,18 +45,29 @@ const canonica = new URL(Astro.url.pathname, Astro.site);
     <meta name="theme-color" content="#8b0445" />
     <link rel="icon" type="image/png" href="/marca/favicon.png" />
     <link rel="apple-touch-icon" href="/marca/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.nome} />
+    <meta property="og:url" content={canonica} />
     <meta property="og:title" content={tituloCompleto} />
     <meta property="og:description" content={descricao} />
-    <meta property="og:image" content={new URL('/marca/logo-da-poli-upe.webp', Astro.site)} />
+    <meta property="og:image" content={imagem} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${tituloCompleto}: logo do DA desenhado numa prancha técnica rosa`} />
     <meta property="og:locale" content="pt_BR" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={imagem} />
   </head>
   <body>
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
-    <Cabecalho />
-    <main id="conteudo">
-      <slot />
-    </main>
-    <Rodape />
+    <div class="folha">
+      <Cabecalho />
+      <main id="conteudo">
+        <slot />
+      </main>
+      <Rodape />
+    </div>
   </body>
 </html>
 

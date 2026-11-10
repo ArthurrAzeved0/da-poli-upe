@@ -10,34 +10,68 @@
    * Contato: arthur_azevedo05@hotmail.com                                     *
    ***************************************************************************** */
 
-import { SITE } from '../config/navegacao';
+/**
+ * The sheet's title block (carimbo): every page signs off like an engineering drawing.
+ * "Folha" is this page's position in the page registry, so it stays true as pages are added.
+ */
+import { PAGINAS, SITE, paginaAtiva } from '../config/navegacao';
+
+const caminho = Astro.url.pathname;
+const indice = Math.max(0, PAGINAS.findIndex((p) => paginaAtiva(p.href, caminho)));
+const doisDigitos = (n: number) => String(n).padStart(2, '0');
+const folha = `${doisDigitos(indice + 1)} / ${doisDigitos(PAGINAS.length)}`;
 ---
 
-<footer class="rodape">
-  <div class="envelope linha">
-    <p><strong>{SITE.nome}</strong> · {SITE.nomeCompleto} · {SITE.instituicao}</p>
-    <p>
-      Desenvolvido por <a href={SITE.autor.pagina}>{SITE.autor.nome}</a>{' · '}<a href={SITE.repositorio}>código aberto</a>
-    </p>
+<footer class="carimbo">
+  <div class="celula projeto">
+    <span class="rot">Projeto</span>
+    <strong>{SITE.nome}</strong>
+    <span class="sub">{SITE.nomeCompleto} · {SITE.instituicao}</span>
+  </div>
+  <div class="celula"><span class="rot">Gestão</span><strong>{SITE.gestao.nome.replace('Gestão ', '')}</strong></div>
+  <div class="celula"><span class="rot">Folha</span><strong>{folha}</strong></div>
+  <div class="celula autoria">
+    <span class="rot">Desenvolvimento</span>
+    <strong><a href={SITE.autor.pagina}>{SITE.autor.nome}</a></strong>
+    <a class="sub" href={SITE.repositorio}>Código aberto no GitHub</a>
   </div>
 </footer>
 
 <style>
-  .rodape {
+  .carimbo {
     margin-top: var(--e-8);
-    background: var(--vinho);
-    color: var(--sobre-placa-2);
-    font-size: 0.95rem;
+    display: grid;
+    grid-template-columns: minmax(0, 2.4fr) minmax(0, 0.7fr) minmax(0, 0.7fr) minmax(0, 1.4fr);
+    border-top: var(--regra) solid var(--magenta);
+    background: var(--chao);
   }
-  .linha {
+  .celula {
+    padding: var(--e-3) var(--e-5) var(--e-4);
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: var(--e-3) var(--e-6);
-    padding-block: var(--e-6);
+    flex-direction: column;
+    gap: var(--e-1);
+    min-width: 0;
   }
-  strong { color: #fff; font-weight: 600; }
-  a { color: #fff; }
-  a:hover { color: var(--chao-forte); }
-  a:focus-visible { outline-color: var(--rosa); }
+  .celula + .celula { border-left: 2px solid var(--magenta); }
+  .rot {
+    font: 700 0.75rem/1.2 var(--fonte-placa);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--framboesa);
+  }
+  strong { font: 700 1.5rem/1.1 var(--fonte-placa); color: var(--vinho); }
+  .projeto strong { color: var(--magenta); font-size: 1.75rem; }
+  .sub { font-size: 0.92rem; color: var(--tinta-2); }
+  a { color: inherit; }
+  a:hover { color: var(--magenta); }
+  a.sub { color: var(--framboesa); }
+
+  @media (max-width: 52rem) {
+    .carimbo { grid-template-columns: 1fr 1fr; }
+    .projeto, .autoria { grid-column: 1 / -1; }
+    .celula + .celula { border-left: 0; }
+    .celula { border-top: 2px solid var(--magenta); }
+    .celula:first-child { border-top: 0; }
+    .celula:nth-child(3) { border-left: 2px solid var(--magenta); }
+  }
 </style>

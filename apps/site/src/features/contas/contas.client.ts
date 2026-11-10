@@ -10,7 +10,7 @@
    ***************************************************************************** */
 
 import type { ContasPublicas, LancamentoPublico } from './tipos';
-import { formatarAtualizacao, formatarComSinal, formatarData, formatarDiaMes, formatarMes, formatarMesLongo, formatarPeriodo, formatarReais } from './formatar';
+import { formatarAtualizacaoCurta, formatarComSinal, formatarData, formatarDiaMes, formatarMes, formatarMesLongo, formatarPeriodo, formatarReais } from './formatar';
 
 type Estado = 'carregando' | 'pronto' | 'vazio' | 'erro';
 const SVG = 'http://www.w3.org/2000/svg';
@@ -52,7 +52,7 @@ function preencherPlaca(d: ContasPublicas) {
   campo('lancamentos', String(d.lancamentos.length));
   const datas = d.lancamentos.map((l) => l.data).sort();
   campo('periodo', datas.length ? formatarPeriodo(datas[0]!, datas.at(-1)!) : 'Sem lançamentos');
-  campo('atualizado', d.atualizadoEm ? `Atualizado em ${formatarAtualizacao(d.atualizadoEm)}` : '');
+  campo('atualizado', d.atualizadoEm ? formatarAtualizacaoCurta(d.atualizadoEm) : '—');
 }
 
 /* ------------------------------------------------------------- por mês */

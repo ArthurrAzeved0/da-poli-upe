@@ -23,10 +23,11 @@ const { titulo, nivel = 'h1', link } = Astro.props;
 const Titulo = nivel;
 ---
 
+<div class="conjunto">
+<p class="cota" aria-hidden="true"><span data-campo="periodo">&nbsp;</span></p>
 <section class="placa" data-placa data-estado="carregando" aria-busy="true" aria-labelledby="placa-titulo">
   <header class="faixa">
     <Titulo id="placa-titulo">{titulo}</Titulo>
-    <p class="atualizado" data-campo="atualizado">&nbsp;</p>
   </header>
 
   <div class="saldo">
@@ -41,7 +42,7 @@ const Titulo = nivel;
     <div class="campo"><dt class="rotulo">Entradas</dt><dd data-campo="entradas">—</dd></div>
     <div class="campo"><dt class="rotulo">Saídas</dt><dd data-campo="saidas">—</dd></div>
     <div class="campo"><dt class="rotulo">Lançamentos</dt><dd data-campo="lancamentos">—</dd></div>
-    <div class="campo"><dt class="rotulo">Período</dt><dd data-campo="periodo">—</dd></div>
+    <div class="campo"><dt class="rotulo">Atualizado</dt><dd data-campo="atualizado">—</dd></div>
   </dl>
 
   <div class="falha" data-falha hidden>
@@ -49,6 +50,7 @@ const Titulo = nivel;
     <button type="button" data-recarregar>Tentar de novo</button>
   </div>
 </section>
+</div>
 
 <style>
   .placa {
@@ -76,7 +78,31 @@ const Titulo = nivel;
     font-size: clamp(2rem, 1.2rem + 2.6vw, 3rem);
     font-weight: 800;
   }
-  .atualizado { color: var(--sobre-placa-2); font-weight: 500; }
+  /* Dimension line over the plate: the period the plate covers, measured like a drawing. */
+  .cota {
+    position: relative;
+    height: 1.75rem;
+    margin: 0 0 var(--e-2);
+    border-inline: 2px solid var(--framboesa);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .cota::before {
+    content: '';
+    position: absolute;
+    inset: auto 0 0.55rem;
+    border-top: 2px solid var(--framboesa);
+  }
+  .cota span {
+    position: relative;
+    background: var(--chao);
+    padding: 0 var(--e-3);
+    font: 700 1rem/1.2 var(--fonte-placa);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--framboesa);
+  }
 
   .rotulo {
     font: 700 0.95rem/1.2 var(--fonte-placa);
@@ -126,15 +152,17 @@ const Titulo = nivel;
     flex-direction: column;
     gap: var(--e-2);
     min-width: 0;
+    container-type: inline-size;
   }
   .campo:nth-child(even) { border-left: var(--regra) solid var(--vinho); }
   .campo:nth-last-child(-n + 2) { border-bottom: 0; }
   dd {
     margin: 0;
-    font: 700 clamp(1.6rem, 1rem + 1.6vw, 2.75rem)/1.05 var(--fonte-placa);
-    overflow-wrap: anywhere;
+    /* Money never wraps: the figure scales to its field instead. */
+    font: 700 clamp(1.1rem, 15cqi, 2.75rem)/1.05 var(--fonte-placa);
+    white-space: nowrap;
   }
-  [data-campo='periodo'] { font-size: clamp(1.35rem, 0.9rem + 1.2vw, 2.1rem); }
+  [data-campo='atualizado'] { font-size: clamp(1.1rem, 13cqi, 2.1rem); }
 
   .placa :focus-visible { outline-color: var(--rosa); }
 
