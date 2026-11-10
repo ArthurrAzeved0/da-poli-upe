@@ -30,6 +30,8 @@ export const SITE = {
   nomeCompleto: 'Diretório Acadêmico da Escola Politécnica de Pernambuco',
   instituicao: 'Universidade de Pernambuco',
   repositorio: 'https://github.com/ArthurrAzeved0/da-poli-upe',
+  /** Current board. Took office on 11/11/2026; named after the year it spends most of its term in. */
+  gestao: { nome: 'Gestão 2027', posse: '2026-11-11' },
   autor: { nome: 'Arthur Azevedo', pagina: 'https://github.com/ArthurrAzeved0' },
 };
 

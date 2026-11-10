@@ -1,0 +1,53 @@
+---
+/* *****************************************************************************
+   * DA Poli-UPE · Site                                       PecaLogo.astro   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
+/**
+ * The DA's blob, drawn as an engineering part on the sheet: the logo's layered rings,
+ * dash-dot centre lines, a dashed construction circle and one radius dimension.
+ * Purely decorative (aria-hidden); size it from the parent.
+ */
+interface Props {
+  class?: string;
+}
+const { class: classe } = Astro.props;
+---
+
+<svg class:list={['peca-logo', classe]} viewBox="0 0 720 720" aria-hidden="true" focusable="false">
+  <g transform="translate(372 362) scale(0.74) translate(-1105 -385)">
+    <path class="anel-1" d="M900,-80 C1180,-120 1520,40 1500,330 C1480,610 1300,820 1060,800 C860,784 760,640 790,450 C815,290 700,200 740,90 C770,10 820,-70 900,-80 Z" />
+    <path class="anel-2" d="M960,40 C1180,20 1400,150 1385,360 C1370,560 1230,700 1060,690 C910,680 850,560 870,420 C890,300 820,220 850,140 C870,80 910,45 960,40 Z" />
+    <path class="anel-3" d="M1010,140 C1170,130 1300,230 1290,380 C1280,520 1180,610 1065,600 C960,592 930,505 945,410 C958,325 905,260 930,200 C945,165 975,143 1010,140 Z" />
+    <path class="anel-4" d="M1050,250 C1150,245 1215,315 1208,395 C1200,475 1140,520 1075,515 C1010,510 995,460 1003,405 C1010,355 985,320 1000,290 C1010,268 1030,252 1050,250 Z" />
+  </g>
+  <g transform="translate(372 362)">
+    <g class="centro"><line x1="-350" y1="0" x2="350" y2="0" /><line x1="0" y1="-350" x2="0" y2="350" /></g>
+    <circle class="construcao" r="330" />
+    <line class="raio" x1="0" y1="0" x2="196" y2="-196" />
+    <path class="seta" d="M196,-196 l-16,3 l8,11 z" />
+    <text class="cota-texto" x="96" y="-118" transform="rotate(-45 96 -118)">R 280</text>
+    <text class="cota-texto pequeno" x="-330" y="-10">CL</text>
+  </g>
+</svg>
+
+<style>
+  .peca-logo { display: block; overflow: visible; }
+  .anel-1 { fill: var(--magenta); }
+  .anel-2 { fill: var(--rosa); }
+  .anel-3 { fill: var(--chao); }
+  .anel-4 { fill: var(--framboesa); }
+  .centro line { stroke: var(--vinho); stroke-width: 2; stroke-dasharray: 26 6 4 6; fill: none; }
+  .construcao { fill: none; stroke: var(--framboesa); stroke-width: 1.5; stroke-dasharray: 6 6; }
+  .raio { stroke: var(--vinho); stroke-width: 2; }
+  .seta { fill: var(--vinho); }
+  .cota-texto { fill: var(--vinho); font: 700 22px var(--fonte-placa); }
+  .cota-texto.pequeno { font-size: 18px; }
+</style>

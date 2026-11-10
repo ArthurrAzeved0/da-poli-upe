@@ -38,7 +38,7 @@ const caminho = Astro.url.pathname;
 </header>
 
 <style>
-  .cabecalho { border-bottom: var(--regra) solid var(--magenta); }
+  .cabecalho { border-bottom: var(--regra) solid var(--magenta); background: var(--chao); }
   .barra {
     display: flex;
     align-items: center;
@@ -70,7 +70,7 @@ const caminho = Astro.url.pathname;
     border-bottom: 4px solid transparent;
     margin-bottom: calc(-1 * var(--regra));
   }
-  nav a:hover { color: var(--magenta); border-bottom-color: var(--chao-forte); }
+  nav a:hover { color: var(--magenta); border-bottom-color: var(--rosa); }
   nav a[aria-current='page'] { color: var(--magenta); border-bottom-color: var(--magenta); }
 
   @media (max-width: 40rem) {

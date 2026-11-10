@@ -63,6 +63,13 @@ export function formatarAtualizacao(iso: string): string {
   return `${p('day')}/${p('month')}/${p('year')} às ${p('hour')}h${p('minute')}`;
 }
 
+/** ISO timestamp → "09/11 · 11h00", for the plate field. */
+export function formatarAtualizacaoCurta(iso: string): string {
+  const longo = formatarAtualizacao(iso); // "09/11/2026 às 11h00"
+  const [data, hora] = longo.split(' às ');
+  return `${data!.slice(0, 5)} · ${hora}`;
+}
+
 /** First and last month of the ledger: "fev a nov de 2026" or "nov de 2025 a mar de 2026". */
 export function formatarPeriodo(primeira: string, ultima: string): string {
   const [a1] = primeira.split('-');
