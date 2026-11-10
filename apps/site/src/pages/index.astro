@@ -12,20 +12,22 @@
 
 import Base from '../layouts/Base.astro';
 import Placa from '../features/contas/Placa.astro';
-import { SITE } from '../config/navegacao';
+import PecaLogo from '../components/PecaLogo.astro';
 ---
 
 <Base descricao="Diretório Acadêmico da Escola Politécnica de Pernambuco (UPE): prestação de contas aberta do caixa do DA.">
-  <div class="envelope">
+  <div class="envelope inicio">
     <section class="abertura" aria-labelledby="titulo-inicio">
-      <img src="/marca/logo-da-poli-upe.webp" alt="Logo do DA Poli-UPE" width="636" height="640" />
       <div class="texto">
-        <h1 id="titulo-inicio">Diretório Acadêmico da Poli-UPE</h1>
-        <p>{SITE.nomeCompleto.replace('Diretório Acadêmico da ', '')} · {SITE.instituicao}</p>
+        <h1 id="titulo-inicio">Diretório Acadêmico da <span class="inteiro">Poli-UPE</span></h1>
+        <p>Escola Politécnica de Pernambuco · Universidade de Pernambuco</p>
       </div>
+      <PecaLogo class="peca" />
     </section>
 
-    <Placa titulo="Prestação de contas" nivel="h2" link="/contas" />
+    <div class="placa-inicio">
+      <Placa titulo="Prestação de contas" nivel="h2" link="/contas" />
+    </div>
   </div>
 </Base>
 
@@ -34,33 +36,48 @@ import { SITE } from '../config/navegacao';
 </script>
 
 <style>
+  .inicio { position: relative; }
   .abertura {
+    position: relative;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     align-items: center;
-    gap: var(--e-6) var(--e-8);
-    padding-block: var(--e-7);
+    min-height: clamp(26rem, 52vw, 40rem);
   }
-  .abertura img {
-    width: clamp(9rem, 6rem + 12vw, 17rem);
-    height: auto;
-    display: block;
-  }
+  .texto { position: relative; z-index: 1; padding-block: var(--e-7); }
   h1 {
-    font-size: clamp(2.6rem, 1.2rem + 5.2vw, 6rem);
+    font-size: clamp(3rem, 1rem + 6.4vw, 7.5rem);
     font-weight: 800;
+    line-height: 0.88;
     color: var(--magenta);
-    max-width: 12ch;
+    max-width: 10ch;
   }
+  .inteiro { white-space: nowrap; }
   .texto p {
-    margin-top: var(--e-4);
+    margin-top: var(--e-5);
     font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
-    font-weight: 500;
-    color: var(--tinta-2);
-    max-width: 40ch;
+    font-weight: 600;
+    color: var(--vinho);
+    max-width: 34ch;
   }
-  @media (max-width: 40rem) {
-    .abertura { grid-template-columns: 1fr; padding-block: var(--e-5) var(--e-6); }
-    .abertura img { width: 8.5rem; }
+  .abertura :global(.peca) {
+    width: min(46rem, 52vw);
+    height: auto;
+    justify-self: end;
+    margin-right: calc(-1 * var(--margem) - 2rem);
+    margin-block: calc(-1 * var(--e-6)) calc(-1 * var(--e-8));
+  }
+  /* The plate is the foreground part: it sits over the drawing's lower edge. */
+  .placa-inicio { position: relative; z-index: 1; }
+
+  @media (max-width: 52rem) {
+    .abertura { grid-template-columns: 1fr; min-height: 0; }
+    .abertura :global(.peca) {
+      grid-row: 1;
+      width: min(22rem, 78vw);
+      justify-self: end;
+      margin: var(--e-4) calc(-1 * var(--margem) - 1rem) calc(-1 * var(--e-6)) 0;
+    }
+    .texto { padding-block: 0 var(--e-6); }
   }
 </style>

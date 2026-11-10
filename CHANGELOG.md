@@ -6,6 +6,17 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), e
 
 ## [Não lançado]
 
+### Adicionado
+- **Identidade "prancha técnica"**: o site inteiro virou uma folha de desenho de engenharia, com papel milimetrado rosa, moldura da folha e carimbo no rodapé (projeto, gestão, número da folha e autoria).
+- **O logo do DA desenhado como peça** na página inicial: a mancha em camadas com linhas de centro, círculo de construção e cota de raio.
+- **Cota sobre a placa** mostrando o período das contas, como uma medida no desenho.
+- **Banners de prévia de link** (WhatsApp, Instagram etc.): 1200×630 em PNG leve, um para o início e outro para a prestação de contas, com as tags Open Graph completas.
+- Gestão atual (**Gestão 2027**, posse em 11/11/2026) na configuração central do site.
+
+### Alterado
+- "Atualizado em" saiu da faixa da placa e virou um campo dela.
+- Valores da placa nunca quebram linha e se ajustam à largura do campo.
+
 ## [0.2.0] - 2026-11-09
 
 O site no ar em https://da-poli.pages.dev.

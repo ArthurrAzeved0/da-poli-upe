@@ -52,4 +52,9 @@
   --moldura: 6px;
 
   --ease-saida: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* The drawing sheet */
+  --grade-forte: rgb(195 30 86 / 0.2);
+  --grade-fina: rgb(195 30 86 / 0.07);
+  --respiro-folha: clamp(0.5rem, 1.6vw, 1.5rem);
 }

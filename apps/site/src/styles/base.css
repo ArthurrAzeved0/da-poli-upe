@@ -21,15 +21,31 @@ html {
   scrollbar-color: var(--magenta) var(--chao-forte);
 }
 
+/* The page is a drawing sheet: pink millimetre paper (fine lines every 8px, bold every 40px). */
 body {
   margin: 0;
-  background: var(--chao);
+  background-color: var(--chao);
+  background-image:
+    linear-gradient(var(--grade-forte) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grade-forte) 1px, transparent 1px),
+    linear-gradient(var(--grade-fina) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grade-fina) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 8px 8px, 8px 8px;
   color: var(--tinta);
   font: 400 1.0625rem/1.55 var(--fonte-texto);
   font-variant-numeric: tabular-nums;
+  padding: var(--respiro-folha);
   min-height: 100dvh;
+}
+
+/* The sheet's border: everything sits inside one ruled frame. */
+.folha {
+  min-height: calc(100dvh - 2 * var(--respiro-folha));
+  border: var(--regra) solid var(--magenta);
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: clip;
 }
 
 main { flex: 1; }
