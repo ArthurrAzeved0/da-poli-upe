@@ -58,13 +58,14 @@ npm run cabecalho      # aplica o cabeçalho de autoria em arquivos novos
 
 Para rodar o ETL localmente contra uma planilha real, veja [docs/configuracao.md](docs/configuracao.md).
 
-### Fluxo de branches
+### Fluxo de branches e versões
 
-- `main`: versão estável, o que está publicado.
+- `main`: só versões lançadas, cada uma com uma tag `vX.Y.Z`.
 - `develop`: integração.
 - `feature/*`: uma branch por funcionalidade, saindo de `develop`.
+- `release/X.Y.Z`: preparação de uma versão (número da versão e changelog), que vai para a `main` com tag e volta para a `develop`.
 
-Commits seguem [Conventional Commits](https://www.conventionalcommits.org/pt-br/), em português.
+Versões seguem o [Versionamento Semântico](https://semver.org/lang/pt-BR/). As mudanças de cada versão estão no [CHANGELOG](CHANGELOG.md) e nos [Releases](https://github.com/ArthurrAzeved0/da-poli-upe/releases). Commits seguem [Conventional Commits](https://www.conventionalcommits.org/pt-br/), em português.
 
 ## Documentação
 
