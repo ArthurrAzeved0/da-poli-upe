@@ -20,7 +20,7 @@ import { basename, join, relative, sep } from 'node:path';
 
 const RAIZ = new URL('..', import.meta.url).pathname;
 const PASTAS = ['apps', 'packages', 'db', 'scripts'];
-const EXTENSOES = new Set(['.ts', '.tsx', '.js', '.mjs', '.sql', '.css']);
+const EXTENSOES = new Set(['.ts', '.tsx', '.js', '.mjs', '.sql', '.css', '.astro']);
 const IGNORAR = new Set(['node_modules', 'dist', '.wrangler', '.astro', 'worker-configuration.d.ts']);
 
 /** Project label shown on the title line, by top-level folder. */
@@ -77,8 +77,16 @@ for (const pasta of PASTAS) {
     const rel = relative(RAIZ, caminho).split(sep).join('/');
     const projeto = PROJETOS.find(([prefixo]) => rel.startsWith(prefixo))?.[1] ?? 'DA Poli-UPE';
     const original = readFileSync(caminho, 'utf8');
-    const corpo = original.replace(EXISTENTE, '');
-    const novo = `${cabecalho(projeto, basename(caminho))}\n\n${corpo}`;
+    const topo = cabecalho(projeto, basename(caminho));
+    let novo;
+    if (caminho.endsWith('.astro')) {
+      // Astro: the header lives at the top of the frontmatter (a JS comment there never reaches the HTML).
+      const semFrente = original.startsWith('---\n') ? original.slice(4) : `---\n${original}`;
+      const corpo = semFrente.replace(EXISTENTE, '');
+      novo = `---\n${topo}\n\n${corpo.startsWith('---\n') ? corpo : corpo}`;
+    } else {
+      novo = `${topo}\n\n${original.replace(EXISTENTE, '')}`;
+    }
     if (novo === original) continue;
     pendentes.push(rel);
     if (!verificar) writeFileSync(caminho, novo);

@@ -6,6 +6,24 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), e
 
 ## [Não lançado]
 
+## [0.2.0] - 2026-11-09
+
+O site no ar em https://da-poli.pages.dev.
+
+### Adicionado
+- **Página inicial** do DA com o logo e a placa de prestação de contas resumida.
+- **Prestação de contas** (`/contas`) com a identidade visual "Placa do DA": saldo em destaque, entradas, saídas, número de lançamentos e período.
+- **Gráficos** por mês (todos os meses; no celular com rolagem lateral começando no mês mais recente) e por categoria, com legenda e versão em tabela.
+- **Extrato completo** com filtros por mês, tipo, categoria e busca sem acento. Estornos aparecem riscados e ligados à transação original nos dois sentidos. Paginação de 30 em 30.
+- Estados de carregando, vazio e erro (com "Tentar de novo"). Pensado primeiro para o celular.
+- **API** `GET /api/contas` (Pages Functions + D1), que não expõe ID nem hash: esses são ferramentas internas de integridade.
+- Navegação central (`src/config/navegacao.ts`) para incluir páginas novas com uma linha.
+- Gerador de dados de exemplo para desenvolvimento local.
+- **Deploy automático**: cada atualização da `main` roda as verificações, aplica as migrações do banco e publica o ETL e o site.
+
+### Alterado
+- O cabeçalho de autoria também cobre os arquivos `.astro`.
+
 ## [0.1.0] - 2026-11-09
 
 Fundação da prestação de contas: tudo o que acontece entre a planilha e o banco. O site ainda não está no ar.
@@ -24,5 +42,6 @@ Fundação da prestação de contas: tudo o que acontece entre a planilha e o ba
 - CI no GitHub Actions: cabeçalhos de autoria, checagem de tipos e testes (46).
 - Licença MIT e cabeçalho de autoria em todos os arquivos-fonte.
 
-[Não lançado]: https://github.com/ArthurrAzeved0/da-poli-upe/compare/v0.1.0...HEAD
+[Não lançado]: https://github.com/ArthurrAzeved0/da-poli-upe/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/ArthurrAzeved0/da-poli-upe/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ArthurrAzeved0/da-poli-upe/releases/tag/v0.1.0

@@ -22,20 +22,25 @@ Siga [planilha.md → Configuração da planilha](planilha.md#configuração-da-
 
 ## 4. Cloudflare
 
-```bash
-npx wrangler login
-npx wrangler d1 create da-poli          # copie o database_id para apps/etl/wrangler.jsonc
-npm run db:migrate:remote
+Já feito para a conta do DA: o banco D1 `da-poli` (região ENAM) e o projeto Pages `da-poli` existem, e os `database_id` estão nos `wrangler.jsonc`.
+
+**Acesso local** (inclusive por SSH): crie um token de API na conta do DA (Pages, D1 e Workers Scripts com permissão Edit; Account Settings com Read) e salve-o num `.env` na raiz, que o git ignora:
+
+```
+CLOUDFLARE_API_TOKEN=...
 ```
 
-Em `apps/etl/wrangler.jsonc`, preencha `SHEET_ID`. Depois cadastre os segredos:
+Antes de cada comando do wrangler, carregue o arquivo: `set -a; . ./.env; set +a`.
+
+**Publicação automática:** o mesmo token fica no segredo `CLOUDFLARE_API_TOKEN` do repositório no GitHub, e o ID da conta na variável `CLOUDFLARE_ACCOUNT_ID`. Cada push na `main` roda [deploy.yml](../.github/workflows/deploy.yml).
+
+Em `apps/etl/wrangler.jsonc`, preencha `SHEET_ID`. Depois cadastre os segredos do ETL:
 
 ```bash
 cd apps/etl
 npx wrangler secret put GOOGLE_SERVICE_ACCOUNT   # cole o JSON inteiro da chave
 npx wrangler secret put TELEGRAM_BOT_TOKEN
 npx wrangler secret put TELEGRAM_CHAT_ID
-npm run deploy
 ```
 
 O cron roda no minuto 0 de cada hora. Para acompanhar: `npx wrangler tail da-poli-etl`.

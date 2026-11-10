@@ -36,7 +36,7 @@ Detalhes em [docs/arquitetura.md](docs/arquitetura.md).
 ```
 apps/
   etl/            Worker agendado: planilha → banco, avisos no Telegram
-  site/           Site Astro + Pages Functions (em construção)
+  site/           Site Astro + Pages Functions: início e prestação de contas
 packages/
   dominio/        Regras de negócio puras: leitura da planilha, conciliação, saldo
 db/migrations/    Esquema do D1 (compartilhado pelo ETL e pelo site)
@@ -56,7 +56,18 @@ npm run db:migrate:local
 npm run cabecalho      # aplica o cabeçalho de autoria em arquivos novos
 ```
 
+Para ver o site localmente com dados de exemplo:
+
+```bash
+npm run exemplo -w apps/site   # gera e carrega 28 lançamentos fictícios no D1 local
+npm run dev -w apps/site       # http://localhost:8788
+```
+
 Para rodar o ETL localmente contra uma planilha real, veja [docs/configuracao.md](docs/configuracao.md).
+
+### Publicação
+
+Cada atualização da `main` publica tudo automaticamente pelo GitHub Actions ([deploy.yml](.github/workflows/deploy.yml)): verificações, migrações do banco, Worker do ETL e site em **https://da-poli.pages.dev**.
 
 ### Fluxo de branches e versões
 

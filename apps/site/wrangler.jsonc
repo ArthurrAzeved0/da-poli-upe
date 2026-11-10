@@ -1,0 +1,16 @@
+// Cloudflare Pages project: static Astro build + Pages Functions (functions/) reading the shared D1.
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "da-poli",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-11-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "da-poli",
+      // Same database as apps/etl/wrangler.jsonc (D1 "da-poli", region ENAM).
+      "database_id": "71f7c2f0-6826-49e7-9e8b-44a144a8029a",
+      "migrations_dir": "../../db/migrations"
+    }
+  ]
+}
