@@ -1,0 +1,83 @@
+---
+/* *****************************************************************************
+   * DA Poli-UPE · Site                                      Cabecalho.astro   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
+import { PAGINAS, SITE, paginaAtiva } from '../config/navegacao';
+
+const caminho = Astro.url.pathname;
+---
+
+<header class="cabecalho">
+  <div class="envelope barra">
+    <a class="marca" href="/" aria-label={`${SITE.nome}, página inicial`}>
+      <img src="/marca/simbolo.webp" alt="" width="40" height="38" />
+      <span>{SITE.nome}</span>
+    </a>
+    <nav aria-label="Principal">
+      <ul>
+        {
+          PAGINAS.filter((p) => p.noMenu).map((p) => (
+            <li>
+              <a href={p.href} aria-current={paginaAtiva(p.href, caminho) ? 'page' : undefined}>
+                {p.rotulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .cabecalho { border-bottom: var(--regra) solid var(--magenta); }
+  .barra {
+    display: flex;
+    align-items: center;
+    gap: var(--e-6);
+    min-height: 4.25rem;
+  }
+  .marca {
+    display: flex;
+    align-items: center;
+    gap: var(--e-3);
+    text-decoration: none;
+    color: var(--magenta);
+    font: 700 1.5rem/1 var(--fonte-placa);
+  }
+  .marca img { display: block; }
+  ul {
+    display: flex;
+    gap: var(--e-6);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  nav a {
+    display: block;
+    padding: 1.4rem 0 1.15rem;
+    color: var(--tinta);
+    font: 600 1.0625rem/1 var(--fonte-texto);
+    text-decoration: none;
+    border-bottom: 4px solid transparent;
+    margin-bottom: calc(-1 * var(--regra));
+  }
+  nav a:hover { color: var(--magenta); border-bottom-color: var(--chao-forte); }
+  nav a[aria-current='page'] { color: var(--magenta); border-bottom-color: var(--magenta); }
+
+  @media (max-width: 40rem) {
+    .barra { flex-wrap: wrap; gap: 0 var(--e-5); padding-top: var(--e-3); }
+    .marca span { font-size: 1.3rem; }
+    nav { width: 100%; }
+    ul { gap: var(--e-5); }
+    nav a { padding: var(--e-3) 0; min-height: 2.75rem; }
+  }
+</style>

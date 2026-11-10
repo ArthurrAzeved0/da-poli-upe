@@ -1,0 +1,66 @@
+---
+/* *****************************************************************************
+   * DA Poli-UPE · Site                                          index.astro   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
+import Base from '../layouts/Base.astro';
+import Placa from '../features/contas/Placa.astro';
+import { SITE } from '../config/navegacao';
+---
+
+<Base descricao="Diretório Acadêmico da Escola Politécnica de Pernambuco (UPE): prestação de contas aberta do caixa do DA.">
+  <div class="envelope">
+    <section class="abertura" aria-labelledby="titulo-inicio">
+      <img src="/marca/logo-da-poli-upe.webp" alt="Logo do DA Poli-UPE" width="636" height="640" />
+      <div class="texto">
+        <h1 id="titulo-inicio">Diretório Acadêmico da Poli-UPE</h1>
+        <p>{SITE.nomeCompleto.replace('Diretório Acadêmico da ', '')} · {SITE.instituicao}</p>
+      </div>
+    </section>
+
+    <Placa titulo="Prestação de contas" nivel="h2" link="/contas" />
+  </div>
+</Base>
+
+<script>
+  import '../features/contas/contas.client';
+</script>
+
+<style>
+  .abertura {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--e-6) var(--e-8);
+    padding-block: var(--e-7);
+  }
+  .abertura img {
+    width: clamp(9rem, 6rem + 12vw, 17rem);
+    height: auto;
+    display: block;
+  }
+  h1 {
+    font-size: clamp(2.6rem, 1.2rem + 5.2vw, 6rem);
+    font-weight: 800;
+    color: var(--magenta);
+    max-width: 12ch;
+  }
+  .texto p {
+    margin-top: var(--e-4);
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    font-weight: 500;
+    color: var(--tinta-2);
+    max-width: 40ch;
+  }
+  @media (max-width: 40rem) {
+    .abertura { grid-template-columns: 1fr; padding-block: var(--e-5) var(--e-6); }
+    .abertura img { width: 8.5rem; }
+  }
+</style>

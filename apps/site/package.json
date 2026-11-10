@@ -1,0 +1,24 @@
+{
+  "name": "@da-poli/site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro build && wrangler pages dev dist --persist-to ../../.wrangler/state --port 8788",
+    "build": "astro build",
+    "deploy": "astro build && wrangler pages deploy dist",
+    "exemplo": "node ../../scripts/exemplo.mjs && wrangler d1 execute da-poli --local --persist-to ../../.wrangler/state --file ../../.wrangler/exemplo.sql",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json && tsc -p functions/tsconfig.json"
+  },
+  "dependencies": {
+    "@da-poli/dominio": "*",
+    "@fontsource/barlow": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "astro": "^7.4.8"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261109.1",
+    "vitest": "^5.1.0"
+  }
+}

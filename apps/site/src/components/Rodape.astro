@@ -1,0 +1,43 @@
+---
+/* *****************************************************************************
+   * DA Poli-UPE · Site                                         Rodape.astro   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
+import { SITE } from '../config/navegacao';
+---
+
+<footer class="rodape">
+  <div class="envelope linha">
+    <p><strong>{SITE.nome}</strong> · {SITE.nomeCompleto} · {SITE.instituicao}</p>
+    <p>
+      Desenvolvido por <a href={SITE.autor.pagina}>{SITE.autor.nome}</a>{' · '}<a href={SITE.repositorio}>código aberto</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    margin-top: var(--e-8);
+    background: var(--vinho);
+    color: var(--sobre-placa-2);
+    font-size: 0.95rem;
+  }
+  .linha {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--e-3) var(--e-6);
+    padding-block: var(--e-6);
+  }
+  strong { color: #fff; font-weight: 600; }
+  a { color: #fff; }
+  a:hover { color: var(--chao-forte); }
+  a:focus-visible { outline-color: var(--rosa); }
+</style>

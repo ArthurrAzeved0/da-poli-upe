@@ -1,0 +1,55 @@
+/* *****************************************************************************
+   * DA Poli-UPE · Site                                           tokens.css   *
+   *---------------------------------------------------------------------------*
+   * Copyright © 2026  Arthur Epifanio de Azevedo                              *
+   * Licenciado sob a licença MIT — ver arquivo LICENSE.                       *
+   *                                                                           *
+   * Autoria e desenvolvimento: Arthur Epifanio de Azevedo                     *
+   * Página:  https://github.com/ArthurrAzeved0                                *
+   * Contato: arthur_azevedo05@hotmail.com                                     *
+   ***************************************************************************** */
+
+/* Design tokens of the DA Poli-UPE site. Colours come from the DA logo and the board's pink palette. */
+:root {
+  /* Ground and ink */
+  --chao: #fdeef4;          /* rosa bebê: page ground */
+  --chao-forte: #fadadd;    /* rosa claro: rules and quiet fills on the ground */
+  --tinta: #2a0614;         /* body text */
+  --tinta-2: #6b2a45;       /* secondary text on the ground */
+
+  /* The plate (placa) */
+  --magenta: #8b0445;       /* plate field */
+  --vinho: #60032b;         /* plate frame and header band */
+  --sobre-placa: #ffffff;   /* figures on the plate */
+  --sobre-placa-2: #fadadd; /* labels on the plate */
+
+  /* Accents */
+  --framboesa: #c31e56;     /* links and active states on the ground */
+  --rosa: #f55c9b;          /* the single accent strip; focus on dark fields */
+
+  /* Chart series (validated: CVD-separable, labels and table view carry identity) */
+  --serie-entrada: #a8125a;
+  --serie-saida: #e5609a;
+
+  /* Type */
+  --fonte-placa: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --fonte-texto: 'Barlow', system-ui, sans-serif;
+
+  /* Space: one rhythm, 4px base */
+  --e-1: 0.25rem;
+  --e-2: 0.5rem;
+  --e-3: 0.75rem;
+  --e-4: 1rem;
+  --e-5: 1.5rem;
+  --e-6: 2rem;
+  --e-7: 3rem;
+  --e-8: 4rem;
+  --margem: clamp(1rem, 4.5vw, 4rem);
+  --largura: 82rem;
+
+  /* Rules: the plate is built from thick wine rules */
+  --regra: 3px;
+  --moldura: 6px;
+
+  --ease-saida: cubic-bezier(0.16, 1, 0.3, 1);
+}
